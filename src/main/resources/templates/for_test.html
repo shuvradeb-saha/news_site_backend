@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:if="${a == 2}">
+    <div>Welcome, Guest</div>
+</div>
+<!-- ELSE -->
+<div th:unless="${a==2}">
+    <div>Hi, User</div>
+</div><br>
+<form>
+    <input type="text" th:if="${a == 0}" th:value="${a}" placeholder="test1">
+    <input placeholder="test2" th:unless="${a == 0}" th:value="${a}" type="text">
+
+</form>
+
+</body>
+</html>

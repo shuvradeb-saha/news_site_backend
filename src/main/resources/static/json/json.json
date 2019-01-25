@@ -1,0 +1,7 @@
+{
+  "id": 63,
+  "title": "Destroy Cookie while Logging out.",
+  "body": "I was facing a problem where while a person logs out his session is invalidated but the JSESSIONID still remained in the browser. As a result while logging in the Java API used to get the request from the browser along with a JSESSIONID(Just the ID since the session was invalidated) and would create the new session with the same ID. To fix this problem I used the above code so that whenever a user logs out the entire JSESSIONID becomes empty and thus cookie wont exist for that site.Anyone using JAVA can utilize this in their code.",
+  "author": "DZone",
+  "date": "2019-01-23"
+}
