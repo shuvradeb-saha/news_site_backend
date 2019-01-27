@@ -58,6 +58,7 @@ public class WelcomeController {
 			singleFieldObject.put("title", news.getTitle());
 			singleFieldObject.put("author", news.getAuthor());
 			singleFieldObject.put("date", news.getDate());
+			singleFieldObject.put("body",news.getBody());
 			newsJsonArray.put(singleFieldObject);
 
 

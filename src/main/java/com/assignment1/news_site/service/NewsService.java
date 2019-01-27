@@ -20,8 +20,9 @@ public class NewsService {
 		this.newsRepository = newsRepository;
 	}
 
-	public void saveNews(News news) {
-			newsRepository.saveAndFlush(news);
+	public News saveNews(News news) {
+		return newsRepository.saveAndFlush(news);
+
 
 	}
 

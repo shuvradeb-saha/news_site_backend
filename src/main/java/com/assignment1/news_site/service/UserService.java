@@ -28,10 +28,10 @@ public class UserService {
 		return userRepository.existsByEmail(email);
 	}
 
-	public void saveUser(User user){
+	public User saveUser(User user){
 		String encoddedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 		user.setPassword(encoddedPassword);
-		userRepository.saveAndFlush(user);
+		return userRepository.saveAndFlush(user);
 	}
 
 	public User getUserByEmail(String email){

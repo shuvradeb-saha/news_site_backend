@@ -25,7 +25,7 @@ public class User {
 	@ValidEmail(message = "Please Enter Email In Correct Format")
 	private String email;
 
-	@Size(min=2, max=100, message = "Password Must Be Between 2 And 100 Characters")
+	@Size(min=2, max=100)
 	private String password;
 
 	public Integer getId() {
