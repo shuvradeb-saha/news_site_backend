@@ -21,7 +21,7 @@ public class CreateNewsController {
 
 	@PostMapping("/submit-news")
 	public ResponseEntity saveSubmittedNews(@RequestBody News news) {
-		//System.out.println(news.toString()+news.getDate());
+
 		newsService.saveNews(news);
 		return new ResponseEntity<>("News Saved Successfully", HttpStatus.OK);
 

@@ -1,10 +1,8 @@
 package com.assignment1.news_site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -99,6 +97,7 @@ public class News {
 			", title='" + title + '\'' +
 			", body='" + body + '\'' +
 			", author='" + author + '\'' +
+			", date=" + date +
 			'}';
 	}
 }
