@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,8 +42,8 @@ public class WelcomeController {
 
 
 	@GetMapping("/")
-	public String getWelcomePage(@RequestParam("pageSize") Optional<Integer> pageSize,
-								 @RequestParam("page") Optional<Integer> page, HttpSession session) throws JSONException, NoSuchFieldException {
+	public ResponseEntity getWelcomePage(@RequestParam("pageSize") Optional<Integer> pageSize,
+										 @RequestParam("page") Optional<Integer> page, HttpSession session) throws JSONException, NoSuchFieldException {
 
 		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get();
@@ -70,7 +72,7 @@ public class WelcomeController {
 		newsJson.put("pagerStart", pager.getStartPage());
 		newsJson.put("pagerEnd", pager.getEndPage());
 
-		return newsJson.toString();
+		return new ResponseEntity<>(newsJson.toString(), HttpStatus.OK);
 
 
 	}

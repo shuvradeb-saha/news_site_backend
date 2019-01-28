@@ -34,7 +34,7 @@ public class NewsService {
 		if (showNews.isPresent()){
 			return showNews.get();
 		}else{
-			throw new ResourceNotFoundException();
+			return null;
 		}
 	}
 

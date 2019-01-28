@@ -7,10 +7,10 @@ import com.fasterxml.jackson.xml.XmlMapper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletResponse;
-import java.awt.print.Book;
+
 import java.io.IOException;
 
 @RestController
@@ -25,7 +25,7 @@ public class ViewNewsController {
 	@GetMapping("/view")
 	public News viewThisNews(@RequestParam("id") Integer id) {
 		boolean not_found = false;
-		News showNews=null;
+		News showNews = null;
 		if (id == null) {
 			not_found = true;
 		} else {
@@ -42,11 +42,14 @@ public class ViewNewsController {
 	}
 
 	@GetMapping("view/json")
-	public @ResponseBody
-	News getJSON(@ModelAttribute("id") Integer id) {
+	public ResponseEntity getJSON(@RequestParam("id") Integer id) {
 		if (id == null)
 			throw new ResourceNotFoundException();
-		return newsService.findNewsById(id);
+		News news = newsService.findNewsById(id);
+		if (news == null)
+			return new ResponseEntity<>(news, HttpStatus.NOT_FOUND);
+		else
+			return new ResponseEntity<>(news, HttpStatus.OK);
 	}
 
 	@RequestMapping("view/xml")

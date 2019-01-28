@@ -1,10 +1,12 @@
 package com.assignment1.news_site.controller;
 
+import com.assignment1.news_site.exception.ResourceNotFoundException;
 import com.assignment1.news_site.model.News;
 import com.assignment1.news_site.service.NewsService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import javax.servlet.http.HttpSession;
+
 
 
 
@@ -18,23 +20,33 @@ public class CreateNewsController {
 
 
 	@PostMapping("/submit-news")
-	public News saveSubmittedNews(@RequestBody News news) {
+	public ResponseEntity saveSubmittedNews(@RequestBody News news) {
 		//System.out.println(news.toString()+news.getDate());
-		return newsService.saveNews(news);
+		newsService.saveNews(news);
+		return new ResponseEntity<>("News Saved Successfully", HttpStatus.OK);
 
 	}
 
+	@GetMapping("/edit")
+	public ResponseEntity getNewsForEdit(@RequestParam("id") Integer id){
+		News news = newsService.findNewsById(id);
+		if(news == null)
+			return new ResponseEntity<>(news,HttpStatus.NOT_FOUND);
+		else
+			return new ResponseEntity<>(news,HttpStatus.OK);
+	}
 
-	@PutMapping("/updateNews")
-	public News updateNews(@RequestBody News news, @RequestParam("id") Integer id) {
-		System.out.println(news.toString()+news.getDate());
-		news.setId(id);
-		return	newsService.saveNews(news);
+
+
+	@PutMapping("/update-news")
+	public void updateNews(@RequestBody News news, @RequestParam("id") Integer id) {
+		News updatedNews = newsService.saveNews(news);
+		//return new ResponseEntity<>(updatedNews,HttpStatus.OK);
 	}
 
 	@DeleteMapping("/remove")
-	public boolean removeNews(@RequestParam("id") Integer id) {
-		return newsService.deleteNewsById(id);
+	public void removeNews(@RequestParam("id") Integer id) {
+		newsService.deleteNewsById(id);
 	}
 
 }
