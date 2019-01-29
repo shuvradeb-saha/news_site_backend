@@ -4,8 +4,9 @@ import com.assignment1.news_site.model.User;
 import com.assignment1.news_site.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 
 import javax.servlet.http.HttpSession;
 
@@ -29,6 +30,13 @@ public class UserController {
 
 	}
 
+	@GetMapping("/user/login")
+	public ResponseEntity afterlogin(){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = userService.getUserByEmail(auth.getName());
+		return new ResponseEntity<>(user,HttpStatus.OK);
+	}
+
 
 	@PostMapping("/login")
 	public ResponseEntity loginVerification(@RequestBody User user) {
@@ -46,10 +54,11 @@ public class UserController {
 		return new ResponseEntity<>("login", HttpStatus.OK);
 	}
 
-	@PostMapping("/logout")
-	public String logout(HttpSession session) {
+	@RequestMapping("/logout")
+	public void logout(HttpSession session) {
 		session.invalidate();
-		return "redirect:/";
+		SecurityContextHolder.clearContext();
+
 	}
 
 }
