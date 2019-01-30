@@ -36,19 +36,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String emailId = authentication.getName();
 		String password = (String) authentication.getCredentials();
 		UserDetails user = this.userAuthenticationService.loadUserByUsername(emailId);
-		//System.out.println(user.toString());
+
 		if (user == null) {
 			System.out.println("null ");
 			throw new UsernameNotFoundException("Username not found.");
 		}
-		//Your password encoder here
-		if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-			System.out.println("pass");
 
+		if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
 			throw new UsernameNotFoundException("Wrong password.");
 		}
-		System.out.println("aaaaaaaa");
+
 		Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-		return new UsernamePasswordAuthenticationToken(user,password,authorities);
+		return new UsernamePasswordAuthenticationToken(user, password, authorities);
 	}
 }

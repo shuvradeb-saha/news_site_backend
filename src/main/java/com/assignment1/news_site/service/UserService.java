@@ -1,6 +1,7 @@
 package com.assignment1.news_site.service;
 
 
+import com.assignment1.news_site.exception.ResourceNotFoundException;
 import com.assignment1.news_site.model.User;
 import com.assignment1.news_site.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,15 @@ public class UserService {
 
 	public boolean matchPassword(String inputtedPassword, String realPassword){
 		return bCryptPasswordEncoder.matches(inputtedPassword, realPassword);
+	}
+
+	public String getUserNameById(Integer id){
+		Optional<User> u = userRepository.findById(id);
+		if(u.isPresent()){
+			User user = u.get();
+			return user.getFullName();
+		}
+		throw new ResourceNotFoundException();
 	}
 
 

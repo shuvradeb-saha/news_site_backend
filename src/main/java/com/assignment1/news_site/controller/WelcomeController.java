@@ -12,16 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-
-import javax.servlet.http.HttpSession;
-
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -31,7 +24,7 @@ public class WelcomeController {
 	private static final int BUTTONS_TO_SHOW = 3;
 	private static final int INITIAL_PAGE = 0;
 	private static final int INITIAL_PAGE_SIZE = 3;
-	private static final int[] PAGE_SIZES = {3, 5, 6, 10};
+
 
 
 	private NewsService newsService;
@@ -40,12 +33,10 @@ public class WelcomeController {
 		this.newsService = newsService;
 	}
 
-
-
-
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	@GetMapping("/")
 	public ResponseEntity getWelcomePage(@RequestParam("pageSize") Optional<Integer> pageSize,
-										 @RequestParam("page") Optional<Integer> page, HttpSession session) throws JSONException, NoSuchFieldException {
+										 @RequestParam("page") Optional<Integer> page) throws JSONException {
 
 		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get();
@@ -56,16 +47,16 @@ public class WelcomeController {
 		JSONObject newsJson = new JSONObject();
 		JSONArray newsJsonArray = new JSONArray();
 
-		for (News news : newsList) {
+		for (News news : newsList)
+		{
 			JSONObject singleFieldObject = new JSONObject();
 			singleFieldObject.put("id", news.getId());
 			singleFieldObject.put("title", news.getTitle());
 			singleFieldObject.put("author", news.getAuthor());
 			singleFieldObject.put("date", news.getDate());
 			singleFieldObject.put("body",news.getBody());
+			singleFieldObject.put("userId",news.getUserId());
 			newsJsonArray.put(singleFieldObject);
-
-
 		}
 
 		newsJson.put("newsList", newsJsonArray);
@@ -73,7 +64,6 @@ public class WelcomeController {
 		newsJson.put("number", newsList.getNumber());
 		newsJson.put("pagerStart", pager.getStartPage());
 		newsJson.put("pagerEnd", pager.getEndPage());
-
 		return new ResponseEntity<>(newsJson.toString(), HttpStatus.OK);
 
 

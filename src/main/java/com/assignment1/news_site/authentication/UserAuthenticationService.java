@@ -1,7 +1,6 @@
 package com.assignment1.news_site.authentication;
 
 import com.assignment1.news_site.model.User;
-import com.assignment1.news_site.repository.UserRepository;
 import com.assignment1.news_site.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +17,6 @@ public class UserAuthenticationService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		User user = userService.getUserByEmail(email);
-//		System.out.println("load user - "+user.toString());
 		if (user == null) {
 			throw new UsernameNotFoundException("Username not found for " + email);
 		}

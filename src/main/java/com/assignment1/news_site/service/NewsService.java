@@ -23,19 +23,11 @@ public class NewsService {
 	public News saveNews(News news) {
 		return newsRepository.saveAndFlush(news);
 
-
 	}
-
-
 
 	public News findNewsById(Integer id){
 		Optional<News> showNews = newsRepository.findById(id);
-
-		if (showNews.isPresent()){
-			return showNews.get();
-		}else{
-			return null;
-		}
+		return !showNews.isPresent() ? null : showNews.get();
 	}
 
 	public Page<News> findPages(Pageable pageRequest){
@@ -43,16 +35,11 @@ public class NewsService {
 	}
 
 	public boolean deleteNewsById(Integer id){
-		if(newsRepository.existsById(id)) {
+		if (!newsRepository.existsById(id)) {
+			throw new ResourceNotFoundException();
+		} else {
 			newsRepository.deleteById(id);
 			return true;
 		}
-		else throw new ResourceNotFoundException();
-
-
 	}
-
-
-
-
 }
