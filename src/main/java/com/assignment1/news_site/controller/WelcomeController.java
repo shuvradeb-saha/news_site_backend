@@ -19,13 +19,9 @@ import java.util.Optional;
 
 @RestController
 public class WelcomeController {
-
-
 	private static final int BUTTONS_TO_SHOW = 3;
 	private static final int INITIAL_PAGE = 0;
 	private static final int INITIAL_PAGE_SIZE = 3;
-
-
 
 	private NewsService newsService;
 
@@ -34,21 +30,20 @@ public class WelcomeController {
 	}
 
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	@GetMapping("/")
+	@GetMapping(value = "/",produces = "application/json")
 	public ResponseEntity getWelcomePage(@RequestParam("pageSize") Optional<Integer> pageSize,
 										 @RequestParam("page") Optional<Integer> page) throws JSONException {
 
 		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get();
-		Page<News> newsList = newsService.findPages(PageRequest.of(evalPage, evalPageSize, Sort.Direction.DESC, "date"));
+		Page<News> newsList = newsService.findPages(PageRequest.of(evalPage, evalPageSize, Sort.Direction.DESC,
+			"date"));
 		PagerModel pager = new PagerModel(newsList.getTotalPages(), newsList.getNumber(), BUTTONS_TO_SHOW);
-
 
 		JSONObject newsJson = new JSONObject();
 		JSONArray newsJsonArray = new JSONArray();
 
-		for (News news : newsList)
-		{
+		for (News news : newsList) {
 			JSONObject singleFieldObject = new JSONObject();
 			singleFieldObject.put("id", news.getId());
 			singleFieldObject.put("title", news.getTitle());
@@ -64,8 +59,7 @@ public class WelcomeController {
 		newsJson.put("number", newsList.getNumber());
 		newsJson.put("pagerStart", pager.getStartPage());
 		newsJson.put("pagerEnd", pager.getEndPage());
+
 		return new ResponseEntity<>(newsJson.toString(), HttpStatus.OK);
-
-
 	}
 }

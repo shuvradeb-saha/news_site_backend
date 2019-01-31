@@ -5,6 +5,8 @@ import com.assignment1.news_site.exception.ResourceNotFoundException;
 import com.assignment1.news_site.model.User;
 import com.assignment1.news_site.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,19 +31,14 @@ public class UserService {
 		return userRepository.existsByEmail(email);
 	}
 
-	public User saveUser(User user){
+	public void saveUser(User user){
 		String encoddedPassword = bCryptPasswordEncoder.encode(user.getPassword());
 		user.setPassword(encoddedPassword);
-		return userRepository.saveAndFlush(user);
+		userRepository.saveAndFlush(user);
 	}
 
-	public User getUserByEmail(String email){
-		Optional<User> u = userRepository.findByEmail(email);
-		return u.orElse(null);
-	}
-
-	public boolean matchPassword(String inputtedPassword, String realPassword){
-		return bCryptPasswordEncoder.matches(inputtedPassword, realPassword);
+	public Optional<User> getUserByEmail(String email){
+		return userRepository.findByEmail(email);
 	}
 
 	public String getUserNameById(Integer id){
@@ -51,6 +48,14 @@ public class UserService {
 			return user.getFullName();
 		}
 		throw new ResourceNotFoundException();
+	}
+
+	public User getAUthenticatedUser(){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if(!getUserByEmail(auth.getName()).isPresent()) {
+			throw new ResourceNotFoundException();
+		}
+		return getUserByEmail(auth.getName()).get();
 	}
 
 

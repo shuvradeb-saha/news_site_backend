@@ -14,7 +14,7 @@ public class UserPrinciple implements UserDetails {
 		this.active = active;
 	}
 
-	public UserPrinciple(User user) {
+	UserPrinciple(User user) {
 		this.user = user;
 	}
 

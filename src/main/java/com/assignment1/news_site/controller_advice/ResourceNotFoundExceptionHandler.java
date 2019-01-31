@@ -2,6 +2,7 @@ package com.assignment1.news_site.controller_advice;
 
 import com.assignment1.news_site.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceNotFoundExceptionHandler
 {
 	@ExceptionHandler(ResourceNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
-	public String handleResourceNotFound() {
-		return "error/error_404";
+	public ResponseEntity handleResourceNotFound() {
+		return new ResponseEntity<>("News You Requested Does Not Exist.",HttpStatus.NOT_FOUND);
 	}
 }

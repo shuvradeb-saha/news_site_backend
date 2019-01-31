@@ -20,21 +20,19 @@ public class NewsService {
 		this.newsRepository = newsRepository;
 	}
 
-	public News saveNews(News news) {
-		return newsRepository.saveAndFlush(news);
-
+	public void saveNews(News news) {
+		newsRepository.saveAndFlush(news);
 	}
 
-	public News findNewsById(Integer id){
-		Optional<News> showNews = newsRepository.findById(id);
-		return !showNews.isPresent() ? null : showNews.get();
+	public Optional<News> findNewsById(Integer id) {
+		return newsRepository.findById(id);
 	}
 
-	public Page<News> findPages(Pageable pageRequest){
+	public Page<News> findPages(Pageable pageRequest) {
 		return newsRepository.findAll(pageRequest);
 	}
 
-	public boolean deleteNewsById(Integer id){
+	public boolean deleteNewsById(Integer id) {
 		if (!newsRepository.existsById(id)) {
 			throw new ResourceNotFoundException();
 		} else {
@@ -42,4 +40,10 @@ public class NewsService {
 			return true;
 		}
 	}
+
+	public boolean checkIfNewsExists(Integer id){
+		return newsRepository.existsById(id);
+	}
+
+
 }

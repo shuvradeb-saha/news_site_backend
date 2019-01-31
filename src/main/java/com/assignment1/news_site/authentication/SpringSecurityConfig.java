@@ -11,11 +11,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Autowired
-	private UserAuthenticationService userAuthenticationService;
+	private final UserAuthenticationService userAuthenticationService;
 
+	private final CustomAuthenticationProvider authenticationProvider;
 	@Autowired
-	private CustomAuthenticationProvider authenticationProvider;
+	public SpringSecurityConfig(CustomAuthenticationProvider authenticationProvider, UserAuthenticationService userAuthenticationService) {
+		this.authenticationProvider = authenticationProvider;
+		this.userAuthenticationService = userAuthenticationService;
+	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
