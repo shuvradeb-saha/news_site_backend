@@ -1,5 +1,6 @@
 package com.assignment1.news_site.authentication;
 
+import com.assignment1.news_site.exception.AuthenticationCredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,13 +33,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	}
 
 	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+	public Authentication authenticate(Authentication authentication)  {
 		String emailId = authentication.getName();
 		String password = (String) authentication.getCredentials();
+
+		if (emailId.length()==0 || password.length()==0){
+			System.out.println("dafjdh");
+		}
+
 		UserDetails user = this.userAuthenticationService.loadUserByUsername(emailId);
 
 		if (user == null) {
-			System.out.println("null ");
 			throw new UsernameNotFoundException("Username not found.");
 		}
 

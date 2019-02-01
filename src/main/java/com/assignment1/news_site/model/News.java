@@ -1,11 +1,9 @@
 package com.assignment1.news_site.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -20,10 +18,12 @@ public class News {
 
 	@Size(min = 1, max = 200, message = "Title must be between 10 and 100 characters")
 	@Column(name = "title", nullable = false)
+	@NotNull
 	private String title;
 
 	@Size(min = 1, max = 2000, message = "Body must be between 10 and 2000 characters")
 	@Column(name = "body", nullable = false)
+	@NotNull
 	private String body;
 
 	@Size(min = 1, max = 100, message = "Author name must be between 10 and 100 characters")
@@ -34,6 +34,7 @@ public class News {
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Column(name = "date", nullable = false)
 	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+	@NotNull
 	private Date date;
 
 	private Integer userId;

@@ -23,25 +23,24 @@ public class NewsController {
 		this.userService = userService;
 	}
 
-	@GetMapping(value = "view/json", produces = "application/json")
-	public ResponseEntity getNews(@RequestParam("id") Integer id) {
-		if (!newsService.findNewsById(id).isPresent())
-			return new ResponseEntity<>("Invalid News Id", HttpStatus.NOT_FOUND);
-		News news = newsService.findNewsById(id).get();
+	@GetMapping(value = "view/json")
+	public ResponseEntity getNewsJson(@RequestParam("id") Integer id) {
+		News news = getCheckedNews(id);
 		return new ResponseEntity<>(news, HttpStatus.OK);
 	}
 
-	@PostMapping("user/submit-news/{userId}")
-	public ResponseEntity saveSubmittedNews(@PathVariable("userId") Integer userId, @Valid @RequestBody News news,
+	@PostMapping("/submit-news")
+	public ResponseEntity saveSubmittedNews(@Valid @RequestBody News news,
 											BindingResult bindingResult) {
-		System.out.println("News: ---- "+news);
-		if (checkAccess(userId))
-			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
 		if (bindingResult.hasErrors()) {
 			return new ResponseEntity<>("Invalid News Information", HttpStatus.BAD_REQUEST);
 		}
-		news.setAuthor(userService.getUserNameById(userId));
-		news.setUserId(userId);
+		System.out.println("News = " + news);
+		User user = userService.getAUthenticatedUser();
+		System.out.println("user = " + user);
+		news.setAuthor(user.getFullName());
+		news.setUserId(user.getId());
+		System.out.println("News = " + news);
 
 		newsService.saveNews(news);
 		return new ResponseEntity<>("News Saved Successfully", HttpStatus.OK);
@@ -51,9 +50,7 @@ public class NewsController {
 	public ResponseEntity getNewsForEdit(@PathVariable("userId") Integer userId, @RequestParam("id") Integer id) {
 		if (checkAccess(userId))
 			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
-		System.out.println("abc");
 		News news = getCheckedNews(id);
-		System.out.println("news: --"+news);
 		if (!userId.equals(news.getUserId())) {
 			return new ResponseEntity<>("You Have No Permission TO Update This News", HttpStatus.FORBIDDEN);
 		}
@@ -78,7 +75,7 @@ public class NewsController {
 			return new ResponseEntity<>("Invalid News Information", HttpStatus.NOT_FOUND);
 		} else if (!newsService.checkIfNewsExists(news.getId())) {
 			return new ResponseEntity<>("News Does Not Exists", HttpStatus.BAD_REQUEST);
-		} else if (!userId.equals(news.getUserId())) {
+		} else if (!userId.equals(getCheckedNews(news.getId()).getUserId())) {
 			return new ResponseEntity<>("You Have No Permission TO Update This News", HttpStatus.FORBIDDEN);
 		} else {
 			news.setAuthor(getCheckedNews(news.getId()).getAuthor());
@@ -92,19 +89,16 @@ public class NewsController {
 	public ResponseEntity removeNews(@RequestParam("id") Integer id, @PathVariable("userId") Integer userId) {
 		if (checkAccess(userId))
 			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
-		System.out.println("abc");
 		News news = getCheckedNews(id);
-		System.out.println("news: --"+news);
 		if (news.getUserId().equals(userId)) {
 			if (newsService.deleteNewsById(id))
-				return new ResponseEntity<>(HttpStatus.OK);
+				return new ResponseEntity<>("Deleted Successfully",HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>("You are not allowed to remove",HttpStatus.FORBIDDEN);
 	}
 
 	private News getCheckedNews(Integer id) {
 		if (!newsService.findNewsById(id).isPresent()) {
-			System.out.println("getCheckedNews");
 			throw new ResourceNotFoundException();
 		}
 		return newsService.findNewsById(id).get();

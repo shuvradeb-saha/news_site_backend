@@ -4,6 +4,8 @@ import com.assignment1.news_site.model.User;
 import com.assignment1.news_site.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +35,15 @@ public class UserController {
 	public ResponseEntity afterlogin(){
 		User user = userService.getAUthenticatedUser();
 		return new ResponseEntity<>(user,HttpStatus.OK);
+	}
+
+	@GetMapping("/test")
+	public void test(){
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println("Auth = "+authentication);
+		System.out.println("Email = "+authentication.getName());
+		System.out.println("Is AUth = "+authentication.isAuthenticated());
+
+
 	}
 }

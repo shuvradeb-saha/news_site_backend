@@ -2,6 +2,7 @@ package com.assignment1.news_site.service;
 
 
 import com.assignment1.news_site.exception.ResourceNotFoundException;
+import com.assignment1.news_site.exception.UsernameNotFoundException;
 import com.assignment1.news_site.model.User;
 import com.assignment1.news_site.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,6 @@ import java.util.Optional;
 @Service
 public class UserService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
 
 	private UserRepository userRepository;
 	@Autowired
@@ -53,10 +52,8 @@ public class UserService {
 	public User getAUthenticatedUser(){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if(!getUserByEmail(auth.getName()).isPresent()) {
-			throw new ResourceNotFoundException();
+			throw new UsernameNotFoundException();
 		}
 		return getUserByEmail(auth.getName()).get();
 	}
-
-
 }
