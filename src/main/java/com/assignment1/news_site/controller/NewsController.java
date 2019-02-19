@@ -29,7 +29,13 @@ public class NewsController {
 		return new ResponseEntity<>(news, HttpStatus.OK);
 	}
 
-	@PostMapping("/submit-news")
+	@GetMapping(value = "view/xml", produces = { "application/xml"})
+	public ResponseEntity getNewsXml(@RequestParam("id") Integer id) {
+		News news = getCheckedNews(id);
+		return new ResponseEntity<>(news, HttpStatus.OK);
+	}
+
+	@PostMapping("/news")
 	public ResponseEntity saveSubmittedNews(@Valid @RequestBody News news,
 											BindingResult bindingResult) {
 		if (bindingResult.hasErrors()) {
@@ -46,10 +52,10 @@ public class NewsController {
 		return new ResponseEntity<>("News Saved Successfully", HttpStatus.OK);
 	}
 
-	@GetMapping("user/edit/{userId}")
-	public ResponseEntity getNewsForEdit(@PathVariable("userId") Integer userId, @RequestParam("id") Integer id) {
-		if (checkAccess(userId))
-			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
+	@GetMapping("/news")
+	public ResponseEntity getNewsForEdit(@RequestParam("id") Integer id) {
+		User user = userService.getAUthenticatedUser();
+		Integer userId = user.getId();
 		News news = getCheckedNews(id);
 		if (!userId.equals(news.getUserId())) {
 			return new ResponseEntity<>("You Have No Permission TO Update This News", HttpStatus.FORBIDDEN);
@@ -62,39 +68,42 @@ public class NewsController {
 	}
 
 
-	@PutMapping("user/update-news/{userId}")
-	public ResponseEntity updateNews(@Valid @RequestBody News news, @PathVariable("userId") Integer userId,
-									 BindingResult bindingResult) {
-		if (checkAccess(userId)) {
-			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
-		}
+	@PutMapping("/news")
+	public ResponseEntity updateNews(@Valid @RequestBody News news, BindingResult bindingResult, @RequestParam("id") Integer id) {
+		System.out.println("puttt  ");
+		User user = userService.getAUthenticatedUser();
+		Integer userId = user.getId();
+
 		if (bindingResult.hasErrors()) {
 			return new ResponseEntity<>("Invalid News Information", HttpStatus.BAD_REQUEST);
 		}
-		if (news.getId() == null) {
+		if (id == null) {
 			return new ResponseEntity<>("Invalid News Information", HttpStatus.NOT_FOUND);
-		} else if (!newsService.checkIfNewsExists(news.getId())) {
+		} else if (!newsService.checkIfNewsExists(id)) {
 			return new ResponseEntity<>("News Does Not Exists", HttpStatus.BAD_REQUEST);
-		} else if (!userId.equals(getCheckedNews(news.getId()).getUserId())) {
+		} else if (!userId.equals(getCheckedNews(id).getUserId())) {
 			return new ResponseEntity<>("You Have No Permission TO Update This News", HttpStatus.FORBIDDEN);
 		} else {
-			news.setAuthor(getCheckedNews(news.getId()).getAuthor());
+			news.setId(id);
+			news.setAuthor(user.getFullName());
 			news.setUserId(userId);
+			System.out.println(news);
+			System.out.println("user - "+news.getUserId());
 			newsService.saveNews(news);
 			return new ResponseEntity<>("News Updated Successfully", HttpStatus.OK);
 		}
 	}
 
-	@DeleteMapping("user/remove/{userId}")
-	public ResponseEntity removeNews(@RequestParam("id") Integer id, @PathVariable("userId") Integer userId) {
-		if (checkAccess(userId))
-			return new ResponseEntity<>("This user id is not Authenticated", HttpStatus.FORBIDDEN);
+	@DeleteMapping("/news")
+	public ResponseEntity removeNews(@RequestParam("id") Integer id) {
+		User user = userService.getAUthenticatedUser();
+		Integer userId = user.getId();
 		News news = getCheckedNews(id);
 		if (news.getUserId().equals(userId)) {
 			if (newsService.deleteNewsById(id))
-				return new ResponseEntity<>("Deleted Successfully",HttpStatus.OK);
+				return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
 		}
-		return new ResponseEntity<>("You are not allowed to remove",HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>("You are not allowed to remove", HttpStatus.FORBIDDEN);
 	}
 
 	private News getCheckedNews(Integer id) {
@@ -104,9 +113,5 @@ public class NewsController {
 		return newsService.findNewsById(id).get();
 	}
 
-	private boolean checkAccess(Integer userId) {
-		User user = userService.getAUthenticatedUser();
-		return !user.getId().equals(userId);
-	}
 
 }

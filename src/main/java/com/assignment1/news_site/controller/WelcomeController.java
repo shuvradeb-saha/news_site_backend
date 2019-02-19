@@ -1,6 +1,5 @@
 package com.assignment1.news_site.controller;
 
-
 import com.assignment1.news_site.model.News;
 import com.assignment1.news_site.model.PagerModel;
 import com.assignment1.news_site.service.NewsService;

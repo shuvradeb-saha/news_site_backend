@@ -36,9 +36,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.cors().and().csrf().disable().authorizeRequests()
-			.antMatchers("/submit-news").authenticated()
+			.antMatchers("/news").authenticated()
 			.antMatchers("/user/**").authenticated().and().
-			formLogin().failureHandler(new RestAuthenticationFailureHandler()).and().httpBasic();
+			formLogin().and().httpBasic();
 	}
 
 
